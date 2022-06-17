@@ -12,8 +12,10 @@ import json
 import jwt
 import atexit
 
+JWT_ALGO = 'HS256'
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'thisisthesecretkey'
+app.config['SECRET_KEY'] = 'replace_this_with_a_secret_key'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 
@@ -27,7 +29,7 @@ def token_required(f):
         if not token:
             return 'Missing token.', 403
         try:
-            jwt.decode(token, app.config['SECRET_KEY'])
+            jwt.decode(token, app.config['SECRET_KEY'], algorithms=JWT_ALGO)
             return f(*args, **kwargs)
         except jwt.exceptions.InvalidTokenError:
             return 'Token is invalid', 403
@@ -80,7 +82,7 @@ scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 # GENERATE JWT TOKEN
-# print('Token: {}'.format(jwt.encode({'user': 'luke'}, app.config['SECRET_KEY'], algorithm='HS256')))
+print('Token: {}'.format(jwt.encode({'user': 'luke'}, app.config['SECRET_KEY'], algorithm=JWT_ALGO)))
 
 # Run the server
 if __name__ == '__main__':
