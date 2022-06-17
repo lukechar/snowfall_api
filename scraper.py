@@ -1,6 +1,5 @@
 import requests
 import bs4
-import json
 
 
 def get_snow_report(search_url_loc):
